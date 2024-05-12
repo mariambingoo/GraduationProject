@@ -74,10 +74,8 @@ class MetricsCollector(Callback):
             "validation_loss": self.val_losses,
             "validation_accuracy": self.val_accuracies,
         }
-        with open(filename, "w") as f:
-            json.dump(metrics_dict, f)
         try:
-            upload_to_endpoint(filename, "localhost:3000/ModelData/trainingData")
+            upload_to_endpoint(metrics_dict, "localhost:3000/ModelData/trainingData")
         except Exception as e:
             print(f"Error uploading file: {e}")
 
