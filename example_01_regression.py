@@ -36,10 +36,10 @@ history = model.fit(
 )
 
 # Export the collected metrics to a JSON file and send it to the endpoint
-# metriccollector.export_to_json("result.json")
+metriccollector.export_to_json("result.json")
 
 # Upload the model to the endpoint
 metriccollector.upload_model(model)
 
 # Visualize the model
-# ModelVisualizer.visualize_model(model, "model.png")
+ModelVisualizer.visualize_model(model, "model.png")
