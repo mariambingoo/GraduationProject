@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const traindingDataRouter = require('./routes/trainingData');
+// const modelWeightsRouter = require('./routes/modelWeights');
 
 const app = express();
 
@@ -9,7 +10,8 @@ const app = express();
 app.use(bodyParser.json());
 
 // Routes
-app.use('/trainingData', traindingDataRouter);
+app.use('/ModelData', traindingDataRouter);
+//app.use('/modelWeights', modelWeightsRouter);
 
 // Start server
 const PORT = process.env.PORT || 3000;

@@ -4,5 +4,8 @@ module.exports = {
       res.send(
         "Ay Ay, Captain !"
       );
+    },
+    getModelWeights: (req, res) => {
+      res.send("Ay Ay, Captain !");
     }
 };
