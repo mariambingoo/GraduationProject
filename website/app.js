@@ -1,5 +1,6 @@
 // app.js
 const express = require('express');
+const fs = require('fs');
 const bodyParser = require('body-parser');
 const traindingDataRouter = require('./routes/trainingData');
 // const modelWeightsRouter = require('./routes/modelWeights');
