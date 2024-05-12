@@ -104,7 +104,7 @@ class MetricsCollector(Callback):
 
 
 # Imports for ModelVisualizer
-from tensorflow.keras.utils import plot_model
+from keras.utils import plot_model
 
 
 class ModelVisualizer:
@@ -156,6 +156,7 @@ class ModelVisualizer:
             plot_model(
                 model, to_file=plot_filename, show_shapes=True, show_layer_names=True
             )
+            print("hehe")
             upload_to_endpoint(plot_filename, "localhost:3000/ModelData/plot")
         except Exception as e:
             print(f"Error uploading file: {e}")
