@@ -77,7 +77,7 @@ class MetricsCollector(Callback):
         with open(filename, "w") as f:
             json.dump(metrics_dict, f)
         try:
-            upload_to_endpoint(filename, "localhost:3000/ModelData/trainingData")
+            upload_to_endpoint(filename, "http://localhost:3000/ModelData/trainingData")
         except Exception as e:
             print(f"Error uploading file: {e}")
 
@@ -96,7 +96,7 @@ class MetricsCollector(Callback):
         try:
             # Save the model to the temporary .h5 file
             model.save(temp_file_path)
-            upload_to_endpoint(temp_file_path, "localhost:3000/ModelData/hd5")
+            upload_to_endpoint(temp_file_path, "http://localhost:3000/ModelData/hd5")
         except Exception as e:
             print(f"Error uploading file: {e}")
         finally:
@@ -158,6 +158,6 @@ class ModelVisualizer:
             plot_model(
                 model, to_file=plot_filename, show_shapes=True, show_layer_names=True
             )
-            upload_to_endpoint(plot_filename, "localhost:3000/ModelData/plot")
+            upload_to_endpoint(plot_filename, "http://localhost:3000/ModelData/plot")
         except Exception as e:
             print(f"Error uploading file: {e}")
