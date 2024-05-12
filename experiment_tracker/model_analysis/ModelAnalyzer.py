@@ -2,7 +2,7 @@ import json
 from tensorflow.keras.callbacks import Callback
 from os import unlink
 from tempfile import NamedTemporaryFile
-from utils import upload_to_endpoint
+from ..utils.UploadToEndpoints import upload_to_endpoint
 
 
 class MetricsCollector(Callback):
@@ -106,7 +106,7 @@ class MetricsCollector(Callback):
 
 
 # Imports for ModelVisualizer
-from keras.utils.vis_utils import plot_model
+from tensorflow.keras.utils import plot_model
 
 
 class ModelVisualizer:
