@@ -1,5 +1,8 @@
 import json
 from tensorflow.keras.callbacks import Callback
+from os import unlink
+from tempfile import NamedTemporaryFile
+from utils import upload_to_endpoint
 
 
 class MetricsCollector(Callback):
@@ -73,6 +76,33 @@ class MetricsCollector(Callback):
         }
         with open(filename, "w") as f:
             json.dump(metrics_dict, f)
+        try:
+            upload_to_endpoint(filename, "localhost:3000/ModelData/trainingData")
+        except Exception as e:
+            print(f"Error uploading file: {e}")
+
+    def upload_model(self, model):
+        """
+        Save the Keras model to a temporary .keras file and upload it to the specified endpoint.
+
+        :param model: The Keras model to save and upload.
+        :param str endpoint_url: The URL of the endpoint to upload the model to.
+        """
+        # Create a temporary file
+        with NamedTemporaryFile(
+            prefix="model_", suffix=".keras", delete=True
+        ) as temp_file:
+            temp_file_path = temp_file.name
+        try:
+            # Save the model to the temporary .h5 file
+            model.save(temp_file_path)
+            upload_to_endpoint(temp_file_path, "localhost:3000/ModelData/hd5")
+        except Exception as e:
+            print(f"Error uploading file: {e}")
+        finally:
+            # Ensure the temporary file is deleted after use
+            if temp_file_path:
+                unlink(temp_file_path)
 
 
 # Imports for ModelVisualizer
@@ -124,7 +154,10 @@ class ModelVisualizer:
         Raises:
             ValueError: If the provided model is not a Keras model instance.
         """
-
-        plot_model(
-            model, to_file=plot_filename, show_shapes=True, show_layer_names=True
-        )
+        try:
+            plot_model(
+                model, to_file=plot_filename, show_shapes=True, show_layer_names=True
+            )
+            upload_to_endpoint(plot_filename, "localhost:3000/ModelData/plot")
+        except Exception as e:
+            print(f"Error uploading file: {e}")
