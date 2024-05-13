@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not-Pluto</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div class="profile">
+        <input type="file" id="profile-pic" accept="image/*" onchange="previewImage(event)">
+        <label for="profile-pic" class="profile-placeholder"></label>
+      </div>
+      
+        <div class="profile-hello">
+            <h2>Welcome</h2>
+            <h3>Mariam</h3>
+        </div>
+        <div class="tabs">
+            <ul>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#how-to-start">How to Start</a></li>
+                <li><a href="#settings">Settings</a></li>
+            </ul>
+        </div>
+      </div>
+      <div class="top-bar">
+        <h1>Projects</h1>
+        <div class="top-bar-buttons">
+          <button id="add-project-btn">+ New Project</button>
+          <input type="text" id="search-input" placeholder="Search project by name"> 
+        </div>    
+      </div>
+
+
+      <div id="new-project-modal" class="modal">
+        <div class="modal-content">
+
+          <div class="row">
+            <div class="col">
+              <h2>New Project</h2>
+              <span class="close">&times;</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="project-data">
+                <label for="project-name">Project Name:</label>
+                <input type="text" id="project-name" name="project-name">
+              </div>
+              <div class="project-data">
+                <label for="Description">Description:</label>
+                <input type="text" id="description" name="description">
+                
+              </div>
+            </div>
+            <div class="col">
+              <div class="project-data">
+                <label for="invite">Invite:</label>
+                <input type="email" id="invite" name="invite">
+                <button id="send-invitation-btn">Send Invitation</button>
+                <button id="create-project-btn">Create Project</button>
+                <button id="cancel-btn">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      
+  
+  
+  <script src="view.js"></script> 
+</body>
+</html>
