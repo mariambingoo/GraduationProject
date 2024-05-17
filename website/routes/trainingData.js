@@ -23,6 +23,8 @@ const router = express.Router();
 const controller = require('../controllers/trainingData');
 
 router.post("/trainingData", controller.getTrainingData);
+router.post("/saveTrainData", controller.saveTrainData);
+router.get("/getTrainData", controller.getTrainData);
 router.post("/hd5", upload.single('modelFile'), controller.getModelWeights);
 router.post("/plot", upload.single('modelPlot'), controller.getPlots);
 

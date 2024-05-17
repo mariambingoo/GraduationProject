@@ -75,7 +75,7 @@ class MetricsCollector(Callback):
             "validation_accuracy": self.val_accuracies,
         }
         try:
-            upload_to_endpoint(metrics_dict, "http://localhost:3000/ModelData/trainingData")
+            upload_to_endpoint('modelFile', metrics_dict, "http://localhost:3000/ModelData/trainingData")
         except Exception as e:
             print(f"Error uploading file (export_to_json): {e}")
 
@@ -155,9 +155,9 @@ class ModelVisualizer:
         """
         try:
             # Check that the plot is working
-            plot_model(
-                model, to_file=plot_filename, show_shapes=True, show_layer_names=True
-            )
-            upload_to_endpoint('modelPlot', plot_filename, "http://localhost:3000/ModelData/plot", plot_filename)
+            # plot_model(
+            #     model, to_file=plot_filename, show_shapes=True, show_layer_names=True
+            # )
+            upload_to_endpoint('modelPlot', plot_filename, "http://localhost:3000/ModelData/plot")
         except Exception as e:
             print(f"Error uploading file (visualize_model): {e}")
