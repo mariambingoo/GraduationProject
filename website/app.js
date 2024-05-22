@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/package', PackageRouter);
-app.use('/ui', uiRouter);
+// app.use('/ui', uiRouter);
 //app.use('/modelWeights', modelWeightsRouter);
 
 // Start server

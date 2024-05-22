@@ -1,9 +1,11 @@
 const express = require('express');
 const projectController = require('../controllers/ProjectController.js');
-const modelController = require('../controllers/ModelController.js'); // Fix the casing of the import statement
+const modelController = require('../controllers/ModelController.js');
 const packageRouter = express.Router();
 
-packageRouter.post("/model/create", modelController.createModel);
-packageRouter.get("/model/get", modelController.getModel);
-packageRouter.delete("/model/delete", modelController.deleteModel);
-packageRouter.patch("/model/update", modelController.updateModel);
+packageRouter.post("/project/create", projectController.createModel);
+// packageRouter.get("/project/get", projectController.getProject);
+// packageRouter.delete("/project/delete", projectController.deleteProject);
+// packageRouter.patch("/project/update", projectController.updateProject);
+
+module.exports = packageRouter;

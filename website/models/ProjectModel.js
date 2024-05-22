@@ -33,15 +33,6 @@ ProjectScehma.virtual('models', {
 
 const Project = mongoose.model('Project', ProjectScehma, 'Projects')
 
-
-Project.prototype.saveData = async function () {
-    try {
-        await this.save()
-    } catch (error) {
-        throw new Error(error)
-    }
-}
-
 module.exports = Project
 
 
