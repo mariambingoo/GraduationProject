@@ -1,6 +1,6 @@
 // app.js
 require('dotenv').config({path: './config/dev.env'})
-require('./DB/database')
+require('./models/database')
 const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
