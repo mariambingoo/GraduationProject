@@ -1,9 +1,9 @@
 const express = require('express');
 const projectController = require('../controllers/ProjectController.js');
 const modelController = require('../controllers/ModelController.js'); // Fix the casing of the import statement
-const packageRouter = express.Router();
+const UIRouter = express.Router();
 
-packageRouter.post("/model/create", modelController.createModel);
-packageRouter.patch("/model/update", modelController.updateModel);
+UIRouter.post("/model/create", modelController.createModel);
+UIRouter.patch("/model/update", modelController.updateModel);
 
-module.exports = packageRouter;
+module.exports = UIRouter;

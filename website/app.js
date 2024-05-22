@@ -6,6 +6,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const trainingDataRouter = require('./routes/trainingData');
 const PackageRouter = require('./routes/PackageRouter');
+const UIRouter = require('./routes/UIRouter');
 // const modelWeightsRouter = require('./routes/modelWeights');
 
 const app = express();
@@ -15,7 +16,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/package', PackageRouter);
-app.use('/ui', uiRouter);
+app.use('/ui', UIRouter);
 //app.use('/modelWeights', modelWeightsRouter);
 
 // Start server
