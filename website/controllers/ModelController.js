@@ -13,7 +13,22 @@ const createModel = async (req, res) => {
 }
 
 const updateModel = async (req, res) => {
+  const updateKeys = Object.keys(req.body)
+  const allowedUpdates = ['model_name', 'description'];
+  const validUpdate = updateKeys.every((update) => allowedUpdates.includes(update))
+  
+  try{
+    if(!validUpdate){
+      return res.status(400).send({error: 'You cant update these values'})
+    }
 
+    const model = await Model.findOne({_id: req.params.id});
+    updateKeys.forEach((key) => model[key] = req.body[key])
+    await model.save()
+    res.status(200).send(model)
+  } catch(err){
+    res.status(500).send(err)
+  }
 }
 
 // const setModelAttr = async (req, res) => {
