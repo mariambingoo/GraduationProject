@@ -1,4 +1,14 @@
+# Project level
 venv/  
 vscode/
-__pycache__/
 model.png
+
+# experiment_tracker 
+experiment_tracker/harty/
+experiment_tracker/__pycache__/
+
+# Node.js
+website/node_modules/
+website/config/
+website/package-lock.json
+yarn.lock

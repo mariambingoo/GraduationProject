@@ -1,7 +1,7 @@
 import requests
 
 
-def upload_to_endpoint(data, endpoint_url):
+def upload_to_endpoint(filetype, data, endpoint_url, filename=None):
     """
     Upload data to the specified endpoint URL.
 
@@ -13,7 +13,7 @@ def upload_to_endpoint(data, endpoint_url):
         headers = {"Content-Type": "application/json"}
         response = requests.post(endpoint_url, json=data, headers=headers)
     else:  # If data is a file
-        files = {"file": open(data, "rb")}
-        response = requests.post(endpoint_url, files=files)
-        
+        modelFile = {filetype: (filename, open(data, 'rb'),
+                  'multipart/form-data')}
+        response = requests.post(endpoint_url, files=modelFile)
     return response

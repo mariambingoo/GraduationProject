@@ -3,7 +3,7 @@ from tensorflow.keras.callbacks import Callback
 from os import unlink
 from tempfile import NamedTemporaryFile
 from ..utils.UploadToEndpoints import upload_to_endpoint
-
+from pathlib import Path
 
 class MetricsCollector(Callback):
     """
@@ -75,9 +75,9 @@ class MetricsCollector(Callback):
             "validation_accuracy": self.val_accuracies,
         }
         try:
-            upload_to_endpoint(metrics_dict, "http://localhost:3000/ModelData/trainingData")
+            upload_to_endpoint('modelFile', metrics_dict, "http://localhost:3000/ModelData/trainingData")
         except Exception as e:
-            print(f"Error uploading file: {e}")
+            print(f"Error uploading file (export_to_json): {e}")
 
     def upload_model(self, model):
         """
@@ -91,12 +91,13 @@ class MetricsCollector(Callback):
             prefix="model_", suffix=".keras", delete=True
         ) as temp_file:
             temp_file_path = temp_file.name
+            filename = Path(temp_file_path).name
         try:
             # Save the model to the temporary .h5 file
             model.save(temp_file_path)
-            upload_to_endpoint(temp_file_path, "http://localhost:3000/ModelData/hd5")
+            upload_to_endpoint('modeFile', temp_file_path, "http://localhost:3000/ModelData/hd5", filename)
         except Exception as e:
-            print(f"Error uploading file: {e}")
+            print(f"Error uploading file (upload_model): {e}")
         finally:
             # Ensure the temporary file is deleted after use
             if temp_file_path:
@@ -153,9 +154,10 @@ class ModelVisualizer:
             ValueError: If the provided model is not a Keras model instance.
         """
         try:
-            plot_model(
-                model, to_file=plot_filename, show_shapes=True, show_layer_names=True
-            )
-            upload_to_endpoint(plot_filename, "http://localhost:3000/ModelData/plot")
+            # Check that the plot is working
+            # plot_model(
+            #     model, to_file=plot_filename, show_shapes=True, show_layer_names=True
+            # )
+            upload_to_endpoint('modelPlot', plot_filename, "http://localhost:3000/ModelData/plot")
         except Exception as e:
-            print(f"Error uploading file: {e}")
+            print(f"Error uploading file (visualize_model): {e}")

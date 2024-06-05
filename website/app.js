@@ -1,7 +1,12 @@
 // app.js
+require('dotenv').config({path: './config/dev.env'})
+require('./models/database')
 const express = require('express');
+const fs = require('fs');
 const bodyParser = require('body-parser');
-const traindingDataRouter = require('./routes/trainingData');
+const trainingDataRouter = require('./routes/trainingData');
+const PackageRouter = require('./routes/PackageRouter');
+const UIRouter = require('./routes/UIRouter');
 // const modelWeightsRouter = require('./routes/modelWeights');
 
 const app = express();
@@ -10,7 +15,8 @@ const app = express();
 app.use(bodyParser.json());
 
 // Routes
-app.use('/ModelData', traindingDataRouter);
+app.use('/package', PackageRouter);
+app.use('/ui', UIRouter);
 //app.use('/modelWeights', modelWeightsRouter);
 
 // Start server

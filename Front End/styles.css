@@ -1,0 +1,268 @@
+/* styles.css */
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+}
+
+.sidebar {
+  width: 350px; 
+  height: 100vh; 
+  background-color: #DDDDDD;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center; 
+  position: relative;
+  border: 2px solid #929292; 
+  
+
+}
+
+.profile {
+  position: relative;
+  width: 150px; 
+  height: 150px; 
+  overflow: hidden;
+  margin-top: -450px; 
+}
+
+.profile-placeholder {
+  position: relative;
+  display: inline-block;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background-color: #ccc;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer; /* Add cursor pointer */
+}
+
+.profile input[type="file"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer; 
+}
+
+.profile img:hover {
+  opacity: 0.8; 
+}
+
+.profile-hello h2 {
+  margin-top: 15px;
+  text-align: center; 
+}
+.profile-hello h3 {
+  margin-top: -10px;
+  text-align: center; 
+}
+
+
+.tabs {
+  position: absolute;
+  padding: 0;
+  margin-top: 80px;
+  right: 50px;
+}
+
+.tabs ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+
+
+.tabs ul li a {
+  text-decoration: none;
+  display: inline-block;
+  padding: 8px 30px; 
+  border-radius: 100px; 
+  color: black;
+}
+
+.tabs ul li a:hover,
+.tabs ul li a.active {
+  background-color: rgba(81, 80, 80, 0.5); 
+}
+
+.tabs ul li:nth-child(1) a 
+{ 
+  margin-top: 250px;;
+  margin-bottom: 5px;
+}
+.tabs ul li:nth-child(2) a 
+{ 
+  margin-bottom: 240px;
+}
+
+.top-bar {
+  background-color: #F6F6F6;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 170px;
+  flex-direction: row;
+  position: relative;
+  border-top: 2px solid #929292; 
+  border-right: 2px solid #929292; 
+  border-bottom: 2px solid #929292; 
+}
+
+
+.top-bar h1 {
+  margin-bottom: 70px ;
+  font-size: 45px;
+  font-weight: bold;
+}
+
+.top-bar-buttons {
+  position: relative;
+  display: flex;
+  flex-direction: column; 
+  align-items: flex-start; 
+}
+
+#add-project-btn {
+  padding: 10px 20px;
+  border: 1px solid black;
+  background-color: #707070;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 150px;
+  margin-bottom: 50px; 
+  margin-right: 90px;
+}
+
+#search-input {
+  position: absolute;
+  top: 65px; 
+  right: 240px ; 
+  background-color: #D9D9D9;
+  padding: 8px;
+  border: 1px solid #707070;
+  border-radius: 5px;
+  width: 500px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.close {
+  float:  right;
+  color: #aaa;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+  
+
+.modal{
+  background-color: rgba(182, 182,182,0.5);
+  .modal-content {
+    background-color: #B6B6B6;
+    padding: 20px;
+    border: 2px solid #707070;
+    border-radius: 5px;
+    top:170px;
+    left:370px;
+    height: 50%;
+    width: 50%;
+  }
+  .modal-content h2 {
+    font-size: 30px;
+    color: black; 
+    position: absolute; 
+  }
+}
+
+.project-data {
+  margin-top: 10px;
+  align-items: center;
+}
+
+.project-data label {
+  display: block; 
+}
+
+#project-name {
+  width: 70%;
+  padding: 1px;
+  border: 1px solid black;
+  border-radius: 7px;
+}
+
+#invite {
+  width: 70%;
+  height: 40px;
+  padding: 1px;
+  border: 1px solid black;
+  border-radius: 7px;
+}
+
+#description {
+  width: 70%;
+  height: 90px;
+  padding: 1px;
+  border: 1px solid black;
+  border-radius: 7px;
+}
+.project-data input[type="text"],
+.project-data textarea {
+  margin-bottom: 0px; 
+}
+#send-invitation-btn{
+  margin-top: 10px;
+  padding: 5px 15px;
+  border: 1px solid black;
+  background-color: #707070;
+  color: white;
+  font-size: 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  width: 100px;
+}
+
+#create-project-btn{
+  margin-top: 100px;
+  padding: 5px 15px;
+  border: 1px solid black;
+  background-color: #707070;
+  color: white;
+  font-size: 14px;
+  border-radius: 15px;
+  cursor: pointer;
+  width: 180px;
+}
+
+#cancel-btn{
+  margin-top: 100px;
+  margin-left: 10px;
+  padding: 5px 15px;
+  border: 1px solid black;
+  background-color: #707070;
+  color: white;
+  font-size: 14px;
+  border-radius: 15px;
+  cursor: pointer;
+  width: 130px;
+}
