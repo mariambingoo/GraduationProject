@@ -15,4 +15,5 @@ def upload_to_endpoint(data, endpoint_url):
     else:  # If data is a file
         files = {"file": open(data, "rb")}
         response = requests.post(endpoint_url, files=files)
+        
     return response
