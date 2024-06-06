@@ -6,7 +6,7 @@ const createModel = async (req, res) => {
 
   try {
       await model.save();
-      res.status(201).send(model);
+      res.status(200).send(model);
   } catch (error) {
       res.status(500);
   }

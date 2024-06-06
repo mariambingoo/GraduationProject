@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 require('dotenv').config({ path: '../config/dev.env'})
 
-const ModelScehma = new mongoose.Schema({
+const ModelSchema = new mongoose.Schema({
   model_name:{
     type: String,
     required: true,
@@ -23,9 +23,15 @@ const ModelScehma = new mongoose.Schema({
   },
   project:{
     type: mongoose.Schema.Types.ObjectId,
-    // required: true,
-    ref: 'Project'
+    required: true,
+    ref: 'Projects'
   }
+})
+
+ModelSchema.virtual('project',{
+  ref: 'Project',
+  localField: 'project',
+  foreignField: '_id'
 })
 
 const Model = mongoose.model('Model', ModelScehma, 'Models')
