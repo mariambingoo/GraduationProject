@@ -13,7 +13,6 @@ def upload_to_endpoint(filetype, data, endpoint_url, filename=None):
         headers = {"Content-Type": "application/json"}
         response = requests.post(endpoint_url, json=data, headers=headers)
     else:  # If data is a file
-        modelFile = {filetype: (filename, open(data, 'rb'),
-                  'multipart/form-data')}
+        modelFile = {filetype: (filename, open(data, "rb"), "multipart/form-data")}
         response = requests.post(endpoint_url, files=modelFile)
     return response
