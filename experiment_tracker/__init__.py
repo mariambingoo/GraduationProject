@@ -4,7 +4,7 @@ from .model_analysis.ModelAnalyzer import (
     ModelVisualizer,
     ExperimentInitializer,
 )
-from .versioning import DatasetVersioning
+from .versioning.DatasetVersioning import DatasetVersioning
 from .versioning import ModelVersioning
 
 # Define __all__ to specify which symbols are exported when using wildcard imports

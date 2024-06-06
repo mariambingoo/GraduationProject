@@ -5,8 +5,6 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
 from sklearn.model_selection import train_test_split
 
-from experiment_tracker import *
-
 # Generate dummy data
 X = np.random.rand(1000, 10)
 y = np.random.randint(2, size=(1000,))
@@ -22,8 +20,6 @@ model = Sequential(
 # Compile the model
 model.compile(optimizer=Adam(), loss="binary_crossentropy", metrics=["accuracy"])
 
-# Create an instance of MetricsCollector
-metriccollector = MetricsCollector()
 
 # Train the model
 history = model.fit(
@@ -35,11 +31,3 @@ history = model.fit(
     callbacks=[metriccollector],
 )
 
-# Export the collected metrics to a JSON file and send it to the endpoint
-metriccollector.export_to_json("result.json")
-
-# Upload the model to the endpoint
-metriccollector.upload_model(model)
-
-# Visualize the model
-ModelVisualizer.visualize_model(model, "model.png")
