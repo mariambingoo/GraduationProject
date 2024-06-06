@@ -1,15 +1,10 @@
 const mongoose = require('mongoose')
 require('dotenv').config({ path: '../config/dev.env'})
 
-const ModelSchema = new mongoose.Schema({
-  model_name:{
+const RunSchema = new mongoose.Schema({
+  run_name:{
     type: String,
     required: true,
-    trim: true,
-  },
-  description:{
-    type: String,
-    required: false,
     trim: true,
   },
   date_created:{
@@ -24,11 +19,16 @@ const ModelSchema = new mongoose.Schema({
   project:{
     type: mongoose.Schema.Types.ObjectId,
     // required: true,
-    ref: 'Project'
-  }
+    ref: 'Projects'
+  },
+    model:{
+        type: mongoose.Schema.Types.ObjectId,
+        // required: true,
+        ref: 'Models'
+    }
 })
 
-const Model = mongoose.model('Model', ModelSchema, 'Models')
+const Run = mongoose.model('Run', RunSchema, 'Runs')
 
 
-module.exports = Model
+module.exports = Run
