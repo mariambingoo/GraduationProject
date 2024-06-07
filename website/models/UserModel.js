@@ -2,7 +2,9 @@ const mongoose = require('mongoose')
 const validator = require("validator")
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const Task = require('../models/task')
+const Project = require('./ProjectModel')
+const Run = require('./RunModel')
+const Model = require('./ModelModel')
 require('dotenv').config({ path: './config/dev.env'})
 
 const userSchema = new mongoose.Schema({
@@ -42,7 +44,7 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         default: 'user',
-        required: true,
+        // required: true,
         enum: ["Data Scientist", "ML Engineer", "MLOps Engineer", "Software Engineer", "DevOps Engineer", "ML Team Lead", "ML Platform Lead", "Head/C-level", "Student / Intern", "AI Researcher", "Other"]
     },
     password: {
@@ -58,7 +60,7 @@ const userSchema = new mongoose.Schema({
     },
     type_of_data: {
         type: String,
-        required: true,
+        // required: true,
         enum: ["Prompts", "Images", "Text", "Audio", "Videos", "Time series", "Tables", "Graphs", "Other"]
     },
     tokens: [{
@@ -74,26 +76,11 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 })
 
-
-// Virtual property setup
-// Virtual property is not an actual data that is stored in the database, its a relationship between two entities.
-// ForeignFiled is the name of the field on the other enitity that represents the model instance
-userSchema.virtual('Projects', {
-    ref: 'Task',
+// Virtual property that links the user to the projects he owns
+userSchema.virtual('projects', {
+    ref: 'Projects',
     localField: '_id',
-    foreignField: 'author'
-})
-
-userSchema.virtual('tasks', {
-    ref: 'Task',
-    localField: '_id',
-    foreignField: 'author'
-})
-
-userSchema.virtual('tasks', {
-    ref: 'Task',
-    localField: '_id',
-    foreignField: 'author'
+    foreignField: 'owner'
 })
 
 // This function is ran every time res.send() is called and a user is sent through it
@@ -144,16 +131,16 @@ userSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
         this.password = await bcrypt.hash(this.password, 8)
     }
-
     next()
 })
 
+// Delete user projects when user is removed
 userSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
     const user = this
-    await Task.deleteMany({ author: user._id })
+    await Project.deleteMany({ owner: user._id })
     next()
 })
 
-const User = mongoose.model('User', userSchema)
+const User = mongoose.model('User', userSchema, 'Users')
 
 module.exports = User

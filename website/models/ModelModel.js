@@ -28,13 +28,13 @@ const ModelSchema = new mongoose.Schema({
   }
 })
 
-ModelSchema.virtual('project',{
-  ref: 'Project',
-  localField: 'project',
-  foreignField: '_id'
+ModelSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
+  const model = this
+  await Run.deleteMany({ model: model._id })
+  next()
 })
 
-const Model = mongoose.model('Model', ModelScehma, 'Models')
+const Model = mongoose.model('Model', ModelSchema, 'Models')
 
 
 module.exports = Model

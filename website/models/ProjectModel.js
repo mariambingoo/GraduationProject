@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Model = require('./ModelModel')
 require('dotenv').config({ path: '../config/dev.env'})
 
-const ProjectScehma = new mongoose.Schema({
+const ProjectSchema = new mongoose.Schema({
   project_name:{
     type: String,
     required: true,
@@ -18,20 +18,26 @@ const ProjectScehma = new mongoose.Schema({
     required: true,
     default: Date.now,
   },
-  // owner:{
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'User',
-  // }
-
+  owner:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Users',
+  },
+  contributers: [{type: mongoose.Schema.Types.ObjectId, ref: 'Users'}]
 })
 
-ProjectScehma.virtual('models', {
+ProjectSchema.virtual('models', {
   ref: 'Model',
   localField: '_id',
   foreignField: 'project'
 })
 
-const Project = mongoose.model('Project', ProjectScehma, 'Projects')
+ProjectSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
+  const project = this
+  await Model.deleteMany({ project: project._id })
+  next()
+})
+
+const Project = mongoose.model('Project', ProjectSchema, 'Projects')
 
 module.exports = Project
 
