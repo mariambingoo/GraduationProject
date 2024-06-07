@@ -85,14 +85,32 @@ const deleteUser = async (req, res) => {
 
 const setAvatar = async (req, res) => {
     try {
-      const buffer = await sharp(req.file.buffer).png().resize({ width: 250, height: 250 }).toBuffer()
-      req.user.avatar = buffer
-      await req.user.save()
-      res.send("avatar set")
+      if (!req.file) {
+        throw new Error('No file uploaded.');
+      }
+      console.log('File received:', req.file);
+  
+      // Process the image with sharp
+      const buffer = await sharp(req.file.buffer)
+        .resize({ width: 250, height: 250 })
+        .png()
+        .toBuffer();
+  
+      console.log('Image processed with sharp.');
+  
+      // Set the avatar and save the user
+      req.user.avatar = buffer;
+      await req.user.save();
+  
+      console.log('User avatar saved.');
+  
+      res.status(201).send('Avatar set');
     } catch (error) {
-      res.status(400).send({ error: error.message })
+      console.error('Error setting avatar:', error);
+      res.status(400).send({ error: error.message });
     }
-  }  
+  };
+  
 
 const deleteAvatar = async (req, res) => {
     try {

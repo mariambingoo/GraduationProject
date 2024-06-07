@@ -2,7 +2,7 @@ const multer = require("multer");
 const { GridFsStorage } = require("multer-gridfs-storage");
 
 // Create storage engine
-export function upload() {
+function upload() {
   const mongooseUrl = process.env.MONGOOSE_URL;
   const storage = new GridFsStorage({
     url: mongooseUrl,
