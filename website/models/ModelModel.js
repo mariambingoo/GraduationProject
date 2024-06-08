@@ -15,15 +15,16 @@ const ModelSchema = new mongoose.Schema({
   date_created:{
     type: Date,
     required: true,
-    default: Date.now,
+    default: Date.now
   },
   last_modified:{
     type: Date,
     required: false,
+    default: Date.now
   },
   project:{
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
+    required: false,
     ref: 'Projects'
   }
 })

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const ModelData = require('../models/ModelDataModel.js');
-const mongoose = require('mongoose');
+const { ObjectId } = require('mongodb');
+// const mongoose = require('mongoose');
 
 const createModelData = async (req, res) => {
   const modelData = new ModelData(req.body);
@@ -15,6 +16,13 @@ const createModelData = async (req, res) => {
 
 const uploadModelFiles = async (req, res) => {
   try {
+      console.log(req.file)
+      const modelData = await ModelData.find({modelId: ObjectId(req.body.modelID)})
+      modelData.model_arch = req.file.path
+      modelData.params.automatic_data = req.body.params.automatic_data
+      modelData.params.manual_data = req.body.params.manual_data
+      await modelData.save()
+      console.log("Data received from 7ggoo")
       res.status(201).send('File uploaded successfully!');
       return;
     } catch (error) {

@@ -1,12 +1,15 @@
 const fs = require('fs');
-const Model = require('../models/ModelModel.js');
+const Model = require('../models/ModelModel');
+const ModelData = require('../models/ModelDataModel')
 
 const createModel = async (req, res) => {
   const model = new Model(req.body);
-
+  const modelData = new ModelData({modelID: model._id})
   try {
       await model.save();
-      res.status(200).send(model);
+      await modelData.save();
+      console.log(model._id);
+      res.status(200).send(model._id);
   } catch (error) {
       res.status(500);
   }

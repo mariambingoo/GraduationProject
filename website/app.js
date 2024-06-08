@@ -19,7 +19,7 @@ app.use(bodyParser.json());
 app.use('/package', PackageRouter);
 app.use('/ui', UIRouter);
 app.use('/user', UserRouter);
-app.use('/trainingData', trainingDataRouter);
+// app.use('/trainingData', trainingDataRouter);
 
 //app.use('/modelWeights', modelWeightsRouter);
 
