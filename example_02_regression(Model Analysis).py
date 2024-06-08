@@ -23,19 +23,18 @@ model = Sequential(
 model.compile(optimizer=Adam(), loss="binary_crossentropy", metrics=["accuracy"])
 
 experiment = ExperimentInitializer()
-run = experiment.init_run(
+init_model = experiment.init_model(
     config={
-        "run_name": "RUN-10",
-        "project_name": "example_01_regression",
-        "api_token": "ouwegfbwon32908ufni12h08eh1",
+        # "project_name": "example_01_regression",
+        # "api_token": "ouwegfbwon32908ufni12h08eh1",
         "model_name": "face_recognition_model",
-        "endpoint": "https://your-endpoint-url.com/upload",
+        "description": "test desc",
     }
 )
 
 
 # Create an instance of MetricsCollector
-metriccollector = experiment.MetricsCollector()
+metriccollector = init_model.MetricsCollector()
 
 # Train the model
 history = model.fit(
@@ -50,17 +49,20 @@ history = model.fit(
 # Add custom metrics to the collector
 metriccollector["test"] = "haha"
 
-# Print the collected metrics
-print(metriccollector.print_metrics())
+# send data
+init_model.finalize(model)
+
+# # Print the collected metrics
+# print(metriccollector.print_metrics())
 
 
-# Export the collected metrics to a JSON file and send it to the endpoint
-metriccollector.export_to_json("result.json")
+# # Export the collected metrics to a JSON file and send it to the endpoint
+# metriccollector.export_to_json()
 
 
-# Visualize the model
-experiment.ModelVisualizer().visualize_model(model, "model.png")
+# # Visualize the model
+# init_model.ModelVisualizer().visualize_model(model, "model.png")
 
 
-# Upload the model to the endpoint
-metriccollector.upload_model(model)
+# # Upload the model to the endpoint
+# metriccollector.upload_model(model)

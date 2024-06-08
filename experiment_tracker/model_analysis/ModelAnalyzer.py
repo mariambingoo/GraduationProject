@@ -4,6 +4,7 @@ from os import unlink
 from tempfile import NamedTemporaryFile
 from ..utils.UploadToEndpoints import upload_to_endpoint
 from pathlib import Path
+from ..versioning.DatasetVersioning import DatasetVersioning
 
 
 class MetricsCollector(Callback):
@@ -70,32 +71,37 @@ class MetricsCollector(Callback):
 
     def print_metrics(self):
         metrics_dict = {
-            "training_loss": self.losses,
-            "training_accuracy": self.accuracies,
-            "validation_loss": self.val_losses,
-            "validation_accuracy": self.val_accuracies,
-            **self.additional_metrics,  # Include additional metrics
+            "automatic_data": {
+                "training_loss": self.losses,
+                "training_accuracy": self.accuracies,
+                "validation_loss": self.val_losses,
+                "validation_accuracy": self.val_accuracies,
+            },
+            "manual_data": {**self.additional_metrics},  # Include additional metrics
         }
         return metrics_dict
 
-    def export_to_json(self, filename="results.json"):
+    def send_json(self):
         """
-        Exports the collected training metrics to a JSON file.
+        Exports the collected training metrics to the API as a JSON.
 
         :param str filename: The filename to save the JSON file. (Default: "results.json")
         """
         metrics_dict = {
-            "training_loss": self.losses,
-            "training_accuracy": self.accuracies,
-            "validation_loss": self.val_losses,
-            "validation_accuracy": self.val_accuracies,
-            **self.additional_metrics,  # Include additional metrics
+            "automatic_data": {
+                "training_loss": self.losses,
+                "training_accuracy": self.accuracies,
+                "validation_loss": self.val_losses,
+                "validation_accuracy": self.val_accuracies,
+            },
+            "manual_data": {**self.additional_metrics},  # Include additional metrics
         }
+        # make sure to handle whether it is model or run
         try:
             upload_to_endpoint(
                 "modelFile",
                 metrics_dict,
-                "http://localhost:3000/ModelData/trainingData",
+                "http://localhost:3000/model/data",
             )
         except Exception as e:
             print(f"Error uploading file (export_to_json): {e}")
@@ -199,41 +205,9 @@ class ExperimentInitializer:
         Initialize the experiment tracking run/model with the given configuration.
 
         """
-        self.MetricsCollectorExperiment = MetricsCollector()
-
-    def _validate_config(self):
-        """Validate the configuration parameters."""
-        if not self.run_name:
-            raise ValueError("Run name is required.")
-        if not self.project_name:
-            raise ValueError("Project name is required.")
-        if not self.api_token:
-            raise ValueError("API token is required.")
-        if not self.model_name:
-            raise ValueError("Model name is required.")
 
     def init_run(self, config):
-        """Initialize the run with the given configuration:
-
-        Parameters:
-        config (dict): A dictionary containing configuration parameters:
-            - run_name (str): The name of the run.
-            - project_name (str): The name of the project.
-            - api_token (str): The API token for authentication.
-            - model_name (str): The name of the model.
-
-        """
-        self.run_name = config.get("run_name")
-        self.project_name = config.get("project_name")
-        self.api_token = config.get("api_token")
-        self.model_name = config.get("model_name")
-
-        self._validate_config()
-        # Placeholder for any initialization logic
-        # API Requests, etc.
-        print(
-            f"Initializing run '{self.run_name}' for project '{self.project_name}' with model '{self.model_name}'."
-        )
+        return RunInitializer(config)
 
     def init_model(self, config):
         """Initialize the model with the given configuration:
@@ -246,24 +220,83 @@ class ExperimentInitializer:
             - model_name (str): The name of the model.
 
         """
+        return ModelInitializer(config)
+
+    #     self.run_name = config.get("run_name")
+    #     self.project_name = config.get("project_name")
+    #     self.api_token = config.get("api_token")
+    #     self.model_name = config.get("model_name")
+
+    #     self._validate_config()
+    #     # Placeholder for any initialization logic
+    #     # API Requests, etc.
+    #     print(
+    #         f"Initializing run '{self.run_name}' for project '{self.project_name}' with model '{self.model_name}'."
+    #     )
+
+    # def MetricsCollector(self):
+    #     return self.MetricsCollectorExperiment
+
+    # def ModelVisualizer(self):
+    #     self.ModelVisualizer = ModelVisualizer()
+    #     return self.ModelVisualizer
+
+    # # def authenticate_with_api(self, api_token):
+    # #     """
+    # #     Authenticate with the experiment tracking API using the provided token.
+
+    # #     Parameters:
+    # #     api_token (str): The API token for authentication.
+    # #     """
+    # #     # Placeholder for API authentication logic
+    # #     print(f"Authenticating with API using token '{api_token}'")
+
+    # # def setup_directories(self):
+    # #     """
+    # #     Set up directories for storing model checkpoints and metrics.
+    # #     """
+    # #     # Placeholder for directory setup logic
+    # #     print("Setting up directories for model checkpoints and metrics.")
+
+
+class RunInitializer:
+    """Initialize the run with the given configuration:
+
+    Parameters:
+    config (dict): A dictionary containing configuration parameters:
+        - run_name (str): The name of the run.
+        - project_name (str): The name of the project.
+        - api_token (str): The API token for authentication.
+        - model_name (str): The name of the model.
+
+    """
+
+    def __init__(self, config):
         self.run_name = config.get("run_name")
         self.project_name = config.get("project_name")
         self.api_token = config.get("api_token")
         self.model_name = config.get("model_name")
-
         self._validate_config()
-        # Placeholder for any initialization logic
-        # API Requests, etc.
+        self.metrics_collector = MetricsCollector()
         print(
             f"Initializing run '{self.run_name}' for project '{self.project_name}' with model '{self.model_name}'."
         )
 
+    def _validate_config(self):
+        if not self.run_name:
+            raise ValueError("Run name is required.")
+        if not self.project_name:
+            raise ValueError("Project name is required.")
+        if not self.api_token:
+            raise ValueError("API token is required.")
+        if not self.model_name:
+            raise ValueError("Model name is required.")
+
     def MetricsCollector(self):
-        return self.MetricsCollectorExperiment
+        return self.metrics_collector
 
     def ModelVisualizer(self):
-        self.ModelVisualizer = ModelVisualizer()
-        return self.ModelVisualizer
+        return ModelVisualizer()
 
     # def authenticate_with_api(self, api_token):
     #     """
@@ -281,3 +314,59 @@ class ExperimentInitializer:
     #     """
     #     # Placeholder for directory setup logic
     #     print("Setting up directories for model checkpoints and metrics.")
+
+
+class ModelInitializer:
+    def __init__(self, config):
+        # self.project_name = config.get("project_name")
+        # self.modelId = config.get("modelId")
+        self.model_name = config.get("model_name")
+        self.description = config.get("description")
+        self._validate_config()
+        self.metrics_collector = MetricsCollector()
+        # print(
+        #     f"Initializing model '{self.model_name}' for run '{self.run_name}' in project '{self.project_name}'."
+        # )
+
+    def _validate_config(self):
+        # if not self.project_name:
+        #     raise ValueError("Project name is required.")
+        # if not self.api_token:
+        #     raise ValueError("API token is required.")
+        if not self.model_name:
+            raise ValueError("Model name is required.")
+
+    def MetricsCollector(self):
+        return self.metrics_collector
+
+    def ModelVisualizer(self):
+        return ModelVisualizer()
+
+    def Track_Data(self, filepath):
+        self.generated_data = DatasetVersioning(filepath).generate_metadata()
+        try:
+            upload_to_endpoint(
+                "trackData",
+                self.generated_data,
+                "http://localhost:3000/ModelData/trackData",
+            )
+        except Exception as e:
+            print(f"Error uploading file (export_to_json): {e}")
+
+    def finalize(self, model):
+        try:
+            upload_to_endpoint(
+                "trackData",
+                {
+                    "model_name": "NEEEEEEWWWWWW MOOOOODDDLEEEEEe",
+                    "description": "Can't be described",
+                },
+                "https://4afc-196-159-67-215.ngrok-free.app/package/model/create",
+            )
+        except Exception as e:
+            print(f"Error uploading file (export_to_json): {e}")
+        # self.metrics_collector.export_to_json()
+
+        # ModelVisualizer().visualize_model(model,"model.png")
+        # self.metrics_collector.upload_model(model)
+        # print("All is done ya Basha")

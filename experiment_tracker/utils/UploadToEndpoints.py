@@ -11,6 +11,7 @@ def upload_to_endpoint(filetype, data, endpoint_url, filename=None):
     """
     if isinstance(data, dict):  # If data is JSON
         headers = {"Content-Type": "application/json"}
+        print(data)
         response = requests.post(endpoint_url, json=data, headers=headers)
     else:  # If data is a file
         modelFile = {filetype: (filename, open(data, "rb"), "multipart/form-data")}

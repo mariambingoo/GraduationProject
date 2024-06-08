@@ -78,7 +78,10 @@ class DatasetVersioning:
                     metadata[relative_root] = []
                 metadata[relative_root].append(file_metadata)
 
-        with open(output_filename, "w") as f:
-            json.dump(metadata, f, indent=4)
+        # with open(output_filename, "w") as f:
+        #     json.dump(metadata, f, indent=4)
+        
 
         print(f"Metadata generated and saved to {output_filename}")
+        
+        return metadata
