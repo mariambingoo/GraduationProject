@@ -39,17 +39,12 @@ const uploadModelFiles = async (req, res) => {
   }
 
   const plotModelData = async (data, type = 'line', title = 'Chart') => {
-    try {
-      console.log("Creating graph");
-      console.log(data);
-      
+    try {    
       const width = 800;
       const height = 600;
       const canvas = createCanvas(width, height);
       const ctx = canvas.getContext('2d');
-  
-      console.log("Canvas created");
-  
+    
       // Create the chart
       new Chart(ctx, {
         type: type, // Chart type: 'line', 'bar', etc.
@@ -64,40 +59,36 @@ const uploadModelFiles = async (req, res) => {
           }]
         },
         options: {
-          responsive: false, // Make the chart non-responsive
+          responsive: false,
           title: {
             display: true,
             text: title
           },
           scales: {
-            xAxes: [{
+            x: {
               display: true,
-              scaleLabel: {
+              title: {
                 display: true,
-                labelString: 'Epoch'
+                text: 'Epoch'
               }
-            }],
-            yAxes: [{
+            },
+            y: {
               display: true,
-              scaleLabel: {
+              title: {
                 display: true,
-                labelString: 'Value'
+                text: 'Value'
               }
-            }]
+            }
           }
         }
       });
-  
-      console.log("Chart created");
-  
+    
       // Ensure the graph directory exists
       const graphDir = path.join(__dirname, '../graph');
       if (!fs.existsSync(graphDir)) {
         fs.mkdirSync(graphDir);
       }
-  
-      console.log("Graph directory checked/created");
-  
+    
       const graphPath = path.join(graphDir, `${title}.png`);
       fs.writeFileSync(graphPath, canvas.toBuffer());
   
