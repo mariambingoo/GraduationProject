@@ -2,30 +2,22 @@ const mongoose = require('mongoose')
 require('dotenv').config({ path: '../config/dev.env'})
 
 const RunDataSchema = new mongoose.Schema({
-    model_weights:{
-        type: Buffer,
+    runID:{
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Runs'
+    },
+    model:{
+        type: Object,
         required: true
     },
-    Model:{
-        type: Buffer,
-        required: true,
-    },
-    params:{
+    automatic_data:{
         type: Object,
         required: true,
     },
-    x_test:{
-        type: Buffer,
+    manual_data:{
+        type: Object,
         required: false,
-    },
-    y_test:{
-        type: Buffer,
-        required: false,
-    },
-    runID:{
-        type: mongoose.Schema.Types.ObjectId,
-        // required: true,
-        ref: 'Runs'
     }
 })
 

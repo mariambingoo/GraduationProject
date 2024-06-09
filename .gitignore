@@ -10,5 +10,6 @@ experiment_tracker/__pycache__/
 # Node.js
 website/node_modules/
 website/config/
+website/uploads/
 website/package-lock.json
 yarn.lock

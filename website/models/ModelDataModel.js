@@ -3,21 +3,21 @@ require('dotenv').config({ path: '../config/dev.env'})
 
 const ModelDataSchema = new mongoose.Schema({
     model_arch:{
-        type: Buffer,
-        required: true
+        type: String,
+        required: false
     },
     params:{
         type: Object,
-        required: true,
+        required: false,
     },
     modelID:{
         type: mongoose.Schema.Types.ObjectId,
-        // required: true,
+        required: true,
         ref: 'Models'
     }
 })
 
-const ModelData = mongoose.model('ModelData', ModelDataSchema, 'ModelssData'); 
+const ModelData = mongoose.model('ModelData', ModelDataSchema, 'ModelsData'); 
 
 
 module.exports = ModelData;
