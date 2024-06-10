@@ -1,13 +1,19 @@
-from os.path import dirname, abspath, join
-from experiment_tracker import DatasetVersioning
+from experiment_tracker import DatasetVersioning, ExperimentInitializer
 
-script_dir = dirname(abspath(__file__))
+# Initialize RunInitializer with configuration
+run_config = {
+    "project_name": "example_project",
+    "model_name": "example_model",
+    "description": "Example run with a simple model for binary classification.",
+}
 
+experiment = ExperimentInitializer()
+model_init = experiment.init_model(run_config)
+model_init.Track_Data("SampleDataset")
 
 # Initialize the DatasetVersioning with the path to the dataset
 dataset_path = "SampleDataset"
-file_path = join(script_dir, dataset_path)
-dataset_versioning = DatasetVersioning(file_path)
+dataset_versioning = DatasetVersioning(dataset_path)
 
-# Generate the metadata and save it to a JSON file
-dataset_versioning.generate_metadata("dataset_metadata.json")
+# Send the data to the server
+model_init.finalize()

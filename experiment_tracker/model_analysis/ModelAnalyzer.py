@@ -317,14 +317,14 @@ class ModelInitializer:
             "file_plot": (plot_file_path, open(plot_file_path, "rb")),
         }
 
-        # Prepare headers and data for logging
-        request_headers = {"Content-Type": "multipart/form-data"}
-        request_body = {"json": json.dumps(metrics_dict)}
+        # # Prepare headers and data for logging
+        # request_headers = {"Content-Type": "multipart/form-data"}
+        # request_body = {"json": json.dumps(metrics_dict)}
 
-        # Save the request headers and body to a JSON file
-        request_data = {"headers": request_headers, "body": request_body}
-        with open("request_data.json", "w") as json_file:
-            json.dump(request_data, json_file, indent=4)
+        # # Save the request headers and body to a JSON file
+        # request_data = {"headers": request_headers, "body": request_body}
+        # with open("request_data.json", "w") as json_file:
+        #     json.dump(request_data, json_file, indent=4)
 
         # Send request
         try:
