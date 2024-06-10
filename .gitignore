@@ -20,3 +20,4 @@ request_data.json
 dataset_metadata.json
 dataver.py
 test.json
+uploads/*
