@@ -52,6 +52,6 @@ const upload = multer({
 });
 
 module.exports = {
-  uploadUserFile: upload.array('userAvatar', 10),
-  uploadPackageFile: upload.array('modelFiles', 10)
+  uploadUserFile: upload.any(),
+  uploadPackageFile: upload.any()
 }

@@ -1,21 +1,32 @@
 const Model = require('../models/ModelModel');
 const ModelData = require('../models/ModelDataModel');
 
+const fs = require('fs');
+const { createCanvas } = require('canvas');
+const Chart = require('chart.js/auto');
+const path = require('path');
+
+
 
 const init_model = async (req, res) => {
   let model, modelData;
 
+  let data = JSON.parse(req.body.json);
+
   try {
-    if (!req.body.model_config){
+    if (!data.model_config){
       return res.status(500).send("Please, specifiy a configuration object")
     }
-    if (req.body.model_config.model_name) {
+    if (data.model_config.model_name) {
+      console.log("Initializing Model and ModelData...")
       // Fetching model if exist
-      model = await Model.findOne({ model_name: req.body.model_config.model_name });
+      model = await Model.findOne({ model_name: data.model_config.model_name });
       if (!model) {
-        // Creating model and modelData if it doesn't exist
-        model = new Model(req.body.model_config);
+        // Creating model and modelData if it doesn't exist\
+        const { model_name } = data.model_config;
+        model = new Model({model_name});
         modelData = new ModelData({ modelID: model._id });
+        console.log("created")
       } else {
         modelData = await ModelData.findOne({modelID: model._id})
       }
@@ -23,7 +34,7 @@ const init_model = async (req, res) => {
 
     console.log("Successfuly initialized a Model and ModelData")
     console.log("Uploading files...")
-    
+
     if (req.files && req.files.length > 0) {
       // Ensure model_arch exists and initialize it if needed
       modelData.model_arch = modelData.model_arch || {};
@@ -50,10 +61,18 @@ const init_model = async (req, res) => {
       }));
     }
 
+    console.log(req.files)
     console.log("Files uploaded!")
 
-    if (req.body.params) {
-      modelData.params = req.body.params
+    if (data.params) {
+      modelData.params = data.params;
+      console.log("EeE")
+
+      for (let key in data.params.automatic_data) {
+        if (data.params.automatic_data.hasOwnProperty(key)) {
+          await plotModelData(data.params.automatic_data[key], 'line', key);
+        }
+      }
     }
 
     if (model) {
@@ -61,8 +80,9 @@ const init_model = async (req, res) => {
     }
 
     await modelData.save();
-    console.log("All saved :)")
-    return res.status(200).send("Operation Successful");
+    console.log("All saved :)");
+    return res.send("Operation Successful");
+    // return res.status(200).send("Operation Successful");
   } catch (error) {
     return res.status(500).send("Couldn't initialize model. Please revise the provided data." );
   }
@@ -70,7 +90,7 @@ const init_model = async (req, res) => {
 
 const uploadModelFiles = async (req, res) => {
   try {
-    const modelData = await ModelData.findOne({ modelID: req.body.model_id });
+    const modelData = await ModelData.findOne({ modelID: data.model_id });
     if (!modelData) {
       return res.status(404).send("No model found with the specified Id..." );
     }
@@ -87,8 +107,8 @@ const uploadModelFiles = async (req, res) => {
       }
     }));
 
-    modelData.params.automatic_data = req.body.params.automatic_data;
-    modelData.params.manual_data = req.body.params.manual_data;
+    modelData.params.automatic_data = data.params.automatic_data;
+    modelData.params.manual_data = data.params.manual_data;
     await modelData.save();
     
     res.status(201).send('Files uploaded successfully!');
@@ -99,7 +119,7 @@ const uploadModelFiles = async (req, res) => {
 
 
 const updateModel = async (req, res) => {
-  const updateKeys = Object.keys(req.body)
+  const updateKeys = Object.keys(data)
   const allowedUpdates = ['model_name', 'description'];
   const validUpdate = updateKeys.every((update) => allowedUpdates.includes(update))
   
@@ -109,13 +129,74 @@ const updateModel = async (req, res) => {
     }
 
     const model = await Model.findOne({_id: req.params.id});
-    updateKeys.forEach((key) => model[key] = req.body[key])
+    updateKeys.forEach((key) => model[key] = data[key])
     await model.save()
     res.status(200).send(model)
   } catch(err){
     res.status(500).send(err)
   }
 }
+
+const plotModelData = async (data, type = 'line', title = 'Chart') => {
+  try {    
+    const width = 800;
+    const height = 600;
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+  
+    // Create the chart
+    new Chart(ctx, {
+      type: type, // Chart type: 'line', 'bar', etc.
+      data: {
+        labels: data.map((_, i) => i + 1), // X-axis labels (e.g., [1, 2, 3, ...])
+        datasets: [{
+          label: title, // Chart title
+          data: data, // Data points
+          fill: false, // No fill under the line
+          borderColor: 'rgba(75, 192, 192, 1)', // Line color
+          backgroundColor: 'rgba(75, 192, 192, 0.2)' // Point color
+        }]
+      },
+      options: {
+        responsive: false,
+        title: {
+          display: true,
+          text: title
+        },
+        scales: {
+          x: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Epoch'
+            }
+          },
+          y: {
+            display: true,
+            title: {
+              display: true,
+              text: 'Value'
+            }
+          }
+        }
+      }
+    });
+  
+    // Ensure the graph directory exists
+    const graphDir = path.join(__dirname, '../graph');
+    if (!fs.existsSync(graphDir)) {
+      fs.mkdirSync(graphDir);
+    }
+  
+    const graphPath = path.join(graphDir, `${title}.png`);
+    fs.writeFileSync(graphPath, canvas.toBuffer());
+
+    console.log(`Chart has been saved as ${graphPath}`);
+  } catch (error) {
+    console.error("Error creating the chart:", error);
+  }
+};
+
 
 
 module.exports = {
