@@ -1,0 +1,27 @@
+{
+    "Image1": [
+        {
+            "file_name": "Test1.jpg",
+            "file_size": 42088,
+            "creation_time": "2024-06-06 04:25:47",
+            "modification_time": "2024-06-06 04:25:47",
+            "file_hash": "95402cf5c63cfa47dd00fbf3fb7436fd8118899d7223c30fb6f4931d628c131c"
+        },
+        {
+            "file_name": "Test2.jpg",
+            "file_size": 23121,
+            "creation_time": "2024-06-06 05:32:19",
+            "modification_time": "2024-06-06 04:26:27",
+            "file_hash": "ea21ece678567fa6ef99a268beef8dcbf64e5505a9376e2f7cf85034d5ce87df"
+        }
+    ],
+    "Image2": [
+        {
+            "file_name": "Test3.jpg",
+            "file_size": 23121,
+            "creation_time": "2024-06-06 04:26:27",
+            "modification_time": "2024-06-06 04:26:27",
+            "file_hash": "ea21ece678567fa6ef99a268beef8dcbf64e5505a9376e2f7cf85034d5ce87df"
+        }
+    ]
+}

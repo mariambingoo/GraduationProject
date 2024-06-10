@@ -4,6 +4,9 @@ from os import unlink
 from tempfile import NamedTemporaryFile
 from ..utils.UploadToEndpoints import upload_to_endpoint
 from pathlib import Path
+from ..versioning.DatasetVersioning import DatasetVersioning
+import requests
+from keras.utils import plot_model
 
 
 class MetricsCollector(Callback):
@@ -12,7 +15,7 @@ class MetricsCollector(Callback):
 
     Usage:
     Instantiate the class and use it as a callback during model training to collect metrics after each epoch.
-    Call the `export_to_json` method to export the collected metrics to a JSON file.
+    Call the `send_json` method to export the collected metrics to a JSON file.
     Note: on_epoch_end() method is called by Keras at the end of each epoch (it is overridden).
     This method collects the training metrics and it is called automatically during model training.
 
@@ -38,14 +41,14 @@ class MetricsCollector(Callback):
     history = model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_val, y_val), callbacks=[metrics_collector])
 
     # Export the collected metrics to a JSON file
-    metrics_collector.export_to_json("metrics.json")
+    metrics_collector.send_json("metrics.json")
     ```
 
     Attributes:
         None
 
     Methods:
-        export_to_json(filename="results.json"):
+        send_json(filename="results.json"):
             Exports the collected training metrics to a JSON file.
 
     """
@@ -70,70 +73,19 @@ class MetricsCollector(Callback):
 
     def print_metrics(self):
         metrics_dict = {
-            "training_loss": self.losses,
-            "training_accuracy": self.accuracies,
-            "validation_loss": self.val_losses,
-            "validation_accuracy": self.val_accuracies,
-            **self.additional_metrics,  # Include additional metrics
+            "params": {
+                "automatic_data": {
+                    "training_loss": self.losses,
+                    "training_accuracy": self.accuracies,
+                    "validation_loss": self.val_losses,
+                    "validation_accuracy": self.val_accuracies,
+                },
+                "manual_data": {
+                    **self.additional_metrics
+                },  # Include additional metrics
+            }
         }
         return metrics_dict
-
-    def export_to_json(self, filename="results.json"):
-        """
-        Exports the collected training metrics to a JSON file.
-
-        :param str filename: The filename to save the JSON file. (Default: "results.json")
-        """
-        metrics_dict = {
-            "training_loss": self.losses,
-            "training_accuracy": self.accuracies,
-            "validation_loss": self.val_losses,
-            "validation_accuracy": self.val_accuracies,
-            **self.additional_metrics,  # Include additional metrics
-        }
-        try:
-            upload_to_endpoint(
-                "modelFile",
-                metrics_dict,
-                "http://localhost:3000/ModelData/trainingData",
-            )
-        except Exception as e:
-            print(f"Error uploading file (export_to_json): {e}")
-
-    def upload_model(self, model):
-        """
-        Save the Keras model to a temporary .keras file and upload it to the specified endpoint.
-
-        :param model: The Keras model to save and upload.
-        :param str endpoint_url: The URL of the endpoint to upload the model to.
-        """
-        # Create a temporary file
-        with NamedTemporaryFile(
-            prefix="model_", suffix=".keras", delete=True
-        ) as temp_file:
-            temp_file_path = temp_file.name
-            filename = Path(temp_file_path).name
-        try:
-            # Save the model to the temporary .h5 file
-            model.save(temp_file_path)
-            upload_to_endpoint(
-                "modeFile",
-                temp_file_path,
-                "http://localhost:3000/ModelData/hd5",
-                filename,
-            )
-        except Exception as e:
-            print(f"Error uploading file (upload_model): {e}")
-        finally:
-            # Ensure the temporary file is deleted after use
-            try:
-                unlink(temp_file_path)
-            except Exception as e:
-                print(f"Error deleting temporary file (upload_model): {e}")
-
-
-# Imports for ModelVisualizer
-from keras.utils import plot_model
 
 
 class ModelVisualizer:
@@ -170,7 +122,7 @@ class ModelVisualizer:
     """
 
     @staticmethod
-    def visualize_model(model, plot_filename="result.png"):
+    def visualize_model(model, plot_filename="model_plot.png"):
         """
         Generates a visualization of the architecture of a Keras model and saves it to a file.
 
@@ -182,58 +134,21 @@ class ModelVisualizer:
             ValueError: If the provided model is not a Keras model instance.
         """
         try:
-            # Check that the plot is working
-            # plot_model(
-            #     model, to_file=plot_filename, show_shapes=True, show_layer_names=True
-            # )
-            upload_to_endpoint(
-                "modelPlot", plot_filename, "http://localhost:3000/ModelData/plot"
+            plot_model(
+                model, to_file=plot_filename, show_shapes=True, show_layer_names=True
             )
         except Exception as e:
-            print(f"Error uploading file (visualize_model): {e}")
+            print(f"Error visualizing model: {e}")
 
 
 class ExperimentInitializer:
     def __init__(self):
         """
         Initialize the experiment tracking run/model with the given configuration.
-
         """
-        self.MetricsCollectorExperiment = MetricsCollector()
-
-    def _validate_config(self):
-        """Validate the configuration parameters."""
-        if not self.run_name:
-            raise ValueError("Run name is required.")
-        if not self.project_name:
-            raise ValueError("Project name is required.")
-        if not self.api_token:
-            raise ValueError("API token is required.")
-        if not self.model_name:
-            raise ValueError("Model name is required.")
 
     def init_run(self, config):
-        """Initialize the run with the given configuration:
-
-        Parameters:
-        config (dict): A dictionary containing configuration parameters:
-            - run_name (str): The name of the run.
-            - project_name (str): The name of the project.
-            - api_token (str): The API token for authentication.
-            - model_name (str): The name of the model.
-
-        """
-        self.run_name = config.get("run_name")
-        self.project_name = config.get("project_name")
-        self.api_token = config.get("api_token")
-        self.model_name = config.get("model_name")
-
-        self._validate_config()
-        # Placeholder for any initialization logic
-        # API Requests, etc.
-        print(
-            f"Initializing run '{self.run_name}' for project '{self.project_name}' with model '{self.model_name}'."
-        )
+        return RunInitializer(config)
 
     def init_model(self, config):
         """Initialize the model with the given configuration:
@@ -246,38 +161,190 @@ class ExperimentInitializer:
             - model_name (str): The name of the model.
 
         """
+        return ModelInitializer(config)
+
+
+class RunInitializer:
+    """Initialize the run with the given configuration:
+
+    Parameters:
+    config (dict): A dictionary containing configuration parameters:
+        - run_name (str): The name of the run.
+        - project_name (str): The name of the project.
+        - model_name (str): The name of the model.
+
+    """
+
+    def __init__(self, config):
         self.run_name = config.get("run_name")
         self.project_name = config.get("project_name")
-        self.api_token = config.get("api_token")
         self.model_name = config.get("model_name")
-
+        self.description = config.get("description")
         self._validate_config()
-        # Placeholder for any initialization logic
-        # API Requests, etc.
+        self.metrics_collector = MetricsCollector()
         print(
             f"Initializing run '{self.run_name}' for project '{self.project_name}' with model '{self.model_name}'."
         )
 
+    def _validate_config(self):
+        if not self.run_name:
+            raise ValueError("Run name is required.")
+        if not self.project_name:
+            raise ValueError("Project name is required.")
+        if not self.model_name:
+            raise ValueError("Model name is required.")
+
     def MetricsCollector(self):
-        return self.MetricsCollectorExperiment
+        return self.metrics_collector
 
     def ModelVisualizer(self):
-        self.ModelVisualizer = ModelVisualizer()
-        return self.ModelVisualizer
+        return ModelVisualizer()
 
-    # def authenticate_with_api(self, api_token):
-    #     """
-    #     Authenticate with the experiment tracking API using the provided token.
+    def collect_and_send_data(self, model, endpoint_url):
+        """
+        Collects parameters, model architecture image, and model file, and sends them in a single request.
 
-    #     Parameters:
-    #     api_token (str): The API token for authentication.
-    #     """
-    #     # Placeholder for API authentication logic
-    #     print(f"Authenticating with API using token '{api_token}'")
+        :param model: The Keras model to save and visualize.
+        :param endpoint_url: The endpoint URL to send the request to.
+        """
+        # Collect metrics
+        metrics_dict = self.metrics_collector.print_metrics()
+        metrics_dict["run"] = {
+            "model_name": self.model_name,
+            "description": self.description,
+            "project_name": self.project_name,
+            "run_name": self.run_name,
+        }
 
-    # def setup_directories(self):
-    #     """
-    #     Set up directories for storing model checkpoints and metrics.
-    #     """
-    #     # Placeholder for directory setup logic
-    #     print("Setting up directories for model checkpoints and metrics.")
+        # Visualize model architecture
+        plot_file_path = "model_plot.png"
+        ModelVisualizer().visualize_model(model, plot_file_path)
+
+        # Save model to a temporary file
+        with NamedTemporaryFile(
+            prefix="model_", suffix=".keras", delete=False
+        ) as temp_model_file:
+            model_file_path = temp_model_file.name
+            model.save(model_file_path)
+        # Prepare files for the request
+        files = {
+            "file_arc": (Path(model_file_path).name, open(model_file_path, "rb")),
+            "file_plot": (plot_file_path, open(plot_file_path, "rb")),
+        }
+        print(files)
+        print(json.dumps(metrics_dict))
+        # Send request
+        try:
+            response = requests.post(
+                endpoint_url, files=files, data={"json": json.dumps(metrics_dict)}
+            )
+            print(response.json())
+            response.raise_for_status()
+            print(f"Successfully uploaded data: {response.json()}")
+        except Exception as e:
+            print(f"Error uploading data: {e}")
+        finally:
+            # Clean up temporary files
+            for file in files.values():
+                file[1].close()
+            unlink(model_file_path)
+            unlink(plot_file_path)
+
+    def finalize(self, model):
+        self.collect_and_send_data(model, "http://127.0.0.1:5000/package/run/create")
+        print("All is done. Run Created")
+
+
+class ModelInitializer:
+    def __init__(self, config):
+        self.model_name = config.get("model_name")
+        self.description = config.get("description")
+        self.project_name = config.get("project_name")
+        self._validate_config()
+        self.metrics_collector = MetricsCollector()
+
+    def _validate_config(self):
+        if not self.model_name:
+            raise ValueError("Model name is required.")
+
+    def MetricsCollector(self):
+        return self.metrics_collector
+
+    def ModelVisualizer(self):
+        return ModelVisualizer()
+
+    def Track_Data(self, filepath):
+        self.generated_data = DatasetVersioning(filepath).generate_metadata(
+            "dataset_metadata.json"
+        )
+        try:
+            upload_to_endpoint(
+                "trackData",
+                self.generated_data,
+                "http://localhost:3000/ModelData/trackData",
+            )
+        except Exception as e:
+            print(f"Error uploading file (trackData): {e}")
+
+    def collect_and_send_data(self, model, endpoint_url):
+        """
+        Collects parameters, model architecture image, and model file, and sends them in a single request.
+
+        :param model: The Keras model to save and visualize.
+        :param endpoint_url: The endpoint URL to send the request to.
+        """
+        # Collect metrics
+        metrics_dict = self.metrics_collector.print_metrics()
+        metrics_dict["model"] = {
+            "model_name": self.model_name,
+            "description": self.description,
+            "project_name": self.project_name,
+        }
+        # Visualize model architecture
+        plot_file_path = "model_plot.png"
+        ModelVisualizer().visualize_model(model, plot_file_path)
+
+        # Save model to a temporary file
+        with NamedTemporaryFile(
+            prefix="model_", suffix=".keras", delete=False
+        ) as temp_model_file:
+            model_file_path = temp_model_file.name
+            model.save(model_file_path)
+
+        # Prepare files for the request
+        files = {
+            "file_arc": (Path(model_file_path).name, open(model_file_path, "rb")),
+            "file_plot": (plot_file_path, open(plot_file_path, "rb")),
+        }
+
+        # # Prepare headers and data for logging
+        # request_headers = {"Content-Type": "multipart/form-data"}
+        # request_body = {"json": json.dumps(metrics_dict)}
+
+        # # Save the request headers and body to a JSON file
+        # request_data = {"headers": request_headers, "body": request_body}
+        # with open("request_data.json", "w") as json_file:
+        #     json.dump(request_data, json_file, indent=4)
+
+        # Send request
+        try:
+
+            response = requests.post(
+                endpoint_url, files=files, data={"json": json.dumps(metrics_dict)}
+            )
+            response.raise_for_status()
+            print(f"Successfully uploaded data: {response.json()}")
+        except Exception as e:
+            print(f"Error uploading data: {e}")
+        finally:
+            # Clean up temporary files
+            for file in files.values():
+                file[1].close()
+            unlink(model_file_path)
+            unlink(plot_file_path)
+
+    def finalize(self, model):
+        self.collect_and_send_data(
+            model, "http://127.0.0.1:5000/package/model/data/create"
+        )
+        print("All is done. Model Created")

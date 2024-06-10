@@ -25,6 +25,8 @@ class DatasetVersioning:
         :return: A dictionary containing metadata for the file.
         :rtype: dict
         """
+        script_dir = os.dirname(os.abspath(__file__))
+        file_path = os.join(script_dir, file_path)
         stat_info = os.stat(file_path)
         metadata = {
             "file_name": Path(file_path).name,
@@ -78,7 +80,9 @@ class DatasetVersioning:
                     metadata[relative_root] = []
                 metadata[relative_root].append(file_metadata)
 
-        with open(output_filename, "w") as f:
-            json.dump(metadata, f, indent=4)
+        # with open(output_filename, "w") as f:
+        #     json.dump(metadata, f, indent=4)
 
         print(f"Metadata generated and saved to {output_filename}")
+
+        return metadata
