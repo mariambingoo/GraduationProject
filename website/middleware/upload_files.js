@@ -52,6 +52,6 @@ const upload = multer({
 });
 
 module.exports = {
-  uploadUserFile: upload.array('userAvatar', 10), // Adjust the field name and max count as needed
-  uploadPackageFile: upload.array('modelFiles', 10), // Adjust the field name and max count as needed
-};
+  uploadUserFile: upload.array('userAvatar', 10),
+  uploadPackageFile: upload.array('modelFiles', 10)
+}

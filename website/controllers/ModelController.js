@@ -86,19 +86,6 @@ const uploadModelFiles = async (req, res) => {
 };
 
 
-// const createModel = async (req, res) => {
-//   const model = new Model(req.body);
-//   const modelData = new ModelData({modelID: model._id})
-//   try {
-//       await model.save();
-//       await modelData.save();
-//       console.log(model._id);
-//       res.status(200).send(model._id);
-//   } catch (error) {
-//       res.status(500);
-//   }
-// }
-
 const updateModel = async (req, res) => {
   const updateKeys = Object.keys(req.body)
   const allowedUpdates = ['model_name', 'description'];
@@ -125,51 +112,3 @@ module.exports = {
   updateModel,
   uploadModelFiles
 };
-
-
-// modelData = {
-//   model_arch: {
-//     reference_string: 'D:/model/files/arc.hd5',
-//     meta_data: {
-//         fieldname: 'modeFile',
-//         originalname: 'arc.hd5',
-//         encoding: '7bit',
-//         mimetype: 'image/jpeg',
-//         filename: 'arc.hd5',
-//         size: 473001
-//     }
-//   },
-//   files: [
-//     {reference_string: 'D:/model/files/image1.png',
-//     meta_data: {
-//         fieldname: 'modeFile',
-//         originalname: 'image1.png',
-//         encoding: '7bit',
-//         mimetype: 'image/png',
-//         filename: 'image1.png',
-//         size: 473001
-//     },
-//     reference_string: 'D:/model/files/image2.jpeg',
-//     meta_data: {
-//         fieldname: 'modeFile',
-//         originalname: 'image2.jpeg',
-//         encoding: '7bit',
-//         mimetype: 'image/jpeg',
-//         filename: 'image2.jpeg',
-//         size: 473001
-//     }}
-//   ],
-//   params: {
-//     automatic_data:{...},
-//     manual_data: {...}
-//   },
-//   modelID
-// }
-
-// // for images or any files in a separate request
-// {
-//   req.body{
-//     ...,
-//     modeID // or model_name
-//   }
-// }
