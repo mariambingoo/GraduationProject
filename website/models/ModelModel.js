@@ -22,7 +22,7 @@ const ModelSchema = new mongoose.Schema({
     required: false,
     default: Date.now
   },
-  project:{
+  projectID:{
     type: mongoose.Schema.Types.ObjectId,
     required: false,
     ref: 'Projects'

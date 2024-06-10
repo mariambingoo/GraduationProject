@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const RunData = require('./RunDataModel')
-require('dotenv').config({ path: '../config/dev.env'})
 
 const RunSchema = new mongoose.Schema({
   run_name:{
@@ -16,15 +15,16 @@ const RunSchema = new mongoose.Schema({
   last_modified:{
     type: Date,
     required: false,
+    default: Date.now,
   },
-  project:{
+  projectID:{
     type: mongoose.Schema.Types.ObjectId,
     // required: true,
     ref: 'Projects'
   },
-  model:{
+  modelID:{
     type: mongoose.Schema.Types.ObjectId,
-    // required: true,
+    // required: fasle,
     ref: 'Models'
   }
 })

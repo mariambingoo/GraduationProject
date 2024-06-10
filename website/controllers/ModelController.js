@@ -1,21 +1,28 @@
-const fs = require('fs');
 const Model = require('../models/ModelModel');
 const ModelData = require('../models/ModelDataModel')
 
-const initModel = async (req, res) => {
-  let model;
-  let modelData;
+const init_model = async (req, res) => {
+  let model, modelData;
 
   try {
-    if (req.body.model.model_name) {
-      model = await Model.findOne({ model_name: req.body.model.model_name });
+    if (!req.body.model_config){
+      return res.status(500).send("Please, specifiy a configuration object")
+    }
+    if (req.body.model_config.model_name) {
+      // Fetching model if exist
+      model = await Model.findOne({ model_name: req.body.model_config.model_name });
       if (!model) {
-        model = new Model(req.body.model);
+        // Creating model and modelData if it doesn't exist
+        model = new Model(req.body.model_config);
         modelData = new ModelData({ modelID: model._id });
+      } else {
+        modelData = await ModelData.findOne({modelID: model._id})
       }
-      modelData = await ModelData.findOne({modelID: model._id})
     }
 
+    console.log("Successfuly initialized a Model and ModelData")
+    console.log("Uploading files...")
+    
     if (req.files && req.files.length > 0) {
       // Ensure model_arch exists and initialize it if needed
       modelData.model_arch = modelData.model_arch || {};
@@ -42,6 +49,8 @@ const initModel = async (req, res) => {
       }));
     }
 
+    console.log("Files uploaded!")
+
     if (req.body.params) {
       modelData.params = req.body.params
     }
@@ -49,18 +58,20 @@ const initModel = async (req, res) => {
     if (model) {
       await model.save();
     }
+
     await modelData.save();
+    console.log("All saved :)")
     return res.status(200).send("Operation Successful");
   } catch (error) {
-    return res.status(500).send({ error: "Couldn't initialize model. Please revise the provided data." });
+    return res.status(500).send("Couldn't initialize model. Please revise the provided data." );
   }
 };
 
 const uploadModelFiles = async (req, res) => {
   try {
-    const modelData = await ModelData.findOne({ modelID: req.body.model_name });
+    const modelData = await ModelData.findOne({ modelID: req.body.model_id });
     if (!modelData) {
-      return res.status(404).send({ error: "No model found with the specified Id..." });
+      return res.status(404).send("No model found with the specified Id..." );
     }
 
     modelData.files = req.files.map(file => ({
@@ -93,7 +104,7 @@ const updateModel = async (req, res) => {
   
   try{
     if(!validUpdate){
-      return res.status(400).send({error: 'You cant update these values'})
+      return res.status(400).send('You cant update these values')
     }
 
     const model = await Model.findOne({_id: req.params.id});
@@ -107,7 +118,7 @@ const updateModel = async (req, res) => {
 
 
 module.exports = {
-  initModel,
+  init_model,
   // createModel,
   updateModel,
   uploadModelFiles

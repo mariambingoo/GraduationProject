@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const ModelArchSchema = new mongoose.Schema({
+const filesSchema = new mongoose.Schema({
   reference_string: { type: String, default: '' },
   meta_data: {
     fieldname: { type: String, default: '' },
@@ -13,11 +13,11 @@ const ModelArchSchema = new mongoose.Schema({
 });
 
 const ModelDataSchema = new mongoose.Schema({
-  modelID: mongoose.Schema.Types.ObjectId,
-  model_arch: { type: ModelArchSchema, default: () => ({}) },
-  files: { type: [ModelArchSchema], default: [] },
+  modelID: { type: mongoose.Schema.Types.ObjectId, required: true },
+  model_arch: { type: filesSchema, default: () => ({}) },
+  files: { type: [filesSchema], default: [] },
   params: {
-    automatic_data: { type: Object, default: {} },
+    automatic_data: { type: Object, required: true, default: {} },
     manual_data: { type: Object, default: {} }
   }
 });

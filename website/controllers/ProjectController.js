@@ -1,4 +1,3 @@
-const express = require('express');
 const projectModel = require('../models/ProjectModel.js');
 
 const createModel = async (req, res) => {
