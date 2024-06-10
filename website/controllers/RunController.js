@@ -8,17 +8,19 @@ const path = require('path');
 
 const init_run = async (req, res) => {
   let model, run, runData;
+  let data = JSON.parse(req.body.json);
+  console.log(data);
 
   try {
-    if (!req.body.json.run_config){
+    if (!data.run_config){
       return res.status(500).send("Please, specify a configuration object")
     }
 
-    const { run_name } = req.body.json.run_config
+    const { run_name } = data.run_config
 
-    if (req.body.json.run_config.model_name) {
+    if (data.run_config.model_name) {
       // Fetching model if exist
-      model = await Model.findOne({ model_name: req.body.json.run_config.model_name });
+      model = await Model.findOne({ model_name: data.run_config.model_name });
 
       if (!model) {
         return res.status(404).send("No model with that name exist")
@@ -50,12 +52,12 @@ const init_run = async (req, res) => {
     console.log("Files uploaded!")
 
 
-    if (req.body.json.params) {
-      runData.params = req.body.json.params;
+    if (data.params) {
+      runData.params = data.params;
       // loop over automatic_data and plot the data
-      for (let key in req.body.json.params.automatic_data) {
-        if (req.body.json.params.automatic_data.hasOwnProperty(key)) {
-          await plotModelData(req.body.json.params.automatic_data[key], 'line', key);
+      for (let key in data.params.automatic_data) {
+        if (data.params.automatic_data.hasOwnProperty(key)) {
+          await plotModelData(data.params.automatic_data[key], 'line', key);
         }
       }
     }
