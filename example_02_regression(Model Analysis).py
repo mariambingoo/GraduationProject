@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 
 from experiment_tracker import ExperimentInitializer
 
+
 # Generate dummy data
 X = np.random.rand(1000, 10)
 y = np.random.randint(2, size=(1000,))
@@ -22,47 +23,30 @@ model = Sequential(
 # Compile the model
 model.compile(optimizer=Adam(), loss="binary_crossentropy", metrics=["accuracy"])
 
+# Initialize RunInitializer with configuration
+run_config = {
+    "project_name": "example_project",
+    "model_name": "example_model",
+    "description": "Example run with a simple model for binary classification.",
+}
+
 experiment = ExperimentInitializer()
-init_model = experiment.init_model(
-    config={
-        # "project_name": "example_01_regression",
-        # "api_token": "ouwegfbwon32908ufni12h08eh1",
-        "model_name": "face_recognition_model",
-        "description": "test desc",
-    }
-)
+model_initializer = experiment.init_model(run_config)
+metrics_collector = model_initializer.MetricsCollector()
 
 
-# Create an instance of MetricsCollector
-metriccollector = init_model.MetricsCollector()
-
-# Train the model
+# Train the model with MetricsCollector as a callback
 history = model.fit(
     X_train,
     y_train,
     epochs=10,
     batch_size=32,
     validation_data=(X_val, y_val),
-    callbacks=[metriccollector],
+    callbacks=[metrics_collector],
 )
 
-# Add custom metrics to the collector
-metriccollector["test"] = "haha"
+# Add custom metrics to the metrics collector
+metrics_collector["epochs"] = 10
 
-# send data
-init_model.finalize(model)
-
-# # Print the collected metrics
-# print(metriccollector.print_metrics())
-
-
-# # Export the collected metrics to a JSON file and send it to the endpoint
-# metriccollector.export_to_json()
-
-
-# # Visualize the model
-# init_model.ModelVisualizer().visualize_model(model, "model.png")
-
-
-# # Upload the model to the endpoint
-# metriccollector.upload_model(model)
+# Finalize and send data
+model_initializer.finalize(model)

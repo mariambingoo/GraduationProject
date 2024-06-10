@@ -13,3 +13,10 @@ website/config/
 website/uploads/
 website/package-lock.json
 yarn.lock
+
+# Hagag Testing
+server.py
+request_data.json
+dataset_metadata.json
+dataver.py
+test.json
