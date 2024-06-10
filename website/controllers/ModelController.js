@@ -88,8 +88,7 @@ const init_model = async (req, res) => {
 
     await modelData.save();
     console.log("All saved :)");
-    return res.send("Operation Successful");
-    // return res.status(200).send("Operation Successful");
+    return res.status(200).send("Operation Successful");
   } catch (error) {
     return res.status(500).send("Couldn't initialize model. Please revise the provided data." );
   }
