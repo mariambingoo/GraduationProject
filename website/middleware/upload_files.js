@@ -52,6 +52,22 @@ const upload = multer({
 });
 
 module.exports = {
-  uploadUserFile: upload.any(),
-  uploadPackageFile: upload.any()
+  uploadUserFile: upload.single('userAvatar'), // Expecting a single file under the 'file' field
+  uploadPackageFile: upload.single("pack_files") // Expecting a single file under the 'packageFile' field
 }
+
+// const multer = require('multer');
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'uploads/'); // Directory where files will be stored
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, file.originalname); // Append timestamp to original filename
+//   }
+// });
+
+// const upload = multer({ storage: storage });
+
+// module.exports = {
+//   uploadFiles: upload.array('files', 12)
+// }

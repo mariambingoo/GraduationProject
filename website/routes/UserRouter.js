@@ -4,7 +4,6 @@ const UserController = require('../controllers/UserController')
 
 const {uploadUserFile} = require('../middleware/upload_files')
 const auth = require('../middleware/auth')
-const multer = require('multer')
 
 // const upload = multer({
 //     limits: {

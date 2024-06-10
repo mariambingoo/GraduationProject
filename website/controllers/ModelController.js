@@ -11,7 +11,7 @@ const path = require('path');
 const init_model = async (req, res) => {
   let model, modelData;
 
-  let data = JSON.parse(req.body.json);
+  let data = req.body;
 
   try {
     if (!data.model_config){
@@ -61,18 +61,25 @@ const init_model = async (req, res) => {
       }));
     }
 
-    console.log(req.files)
+    // console.log(req.file)
+    console.log("---------------")
     console.log("Files uploaded!")
+    console.log("---------------")
 
     if (data.params) {
       modelData.params = data.params;
-      console.log("EeE")
-
       for (let key in data.params.automatic_data) {
+        console.log("Fine till here")
+        console.log(data.params.automatic_data)
         if (data.params.automatic_data.hasOwnProperty(key)) {
           await plotModelData(data.params.automatic_data[key], 'line', key);
         }
       }
+    }
+    // console.log("fine here")
+
+    if (data.params) {
+      modelData.params = data.params
     }
 
     if (model) {
@@ -187,6 +194,7 @@ const plotModelData = async (data, type = 'line', title = 'Chart') => {
     if (!fs.existsSync(graphDir)) {
       fs.mkdirSync(graphDir);
     }
+    console.log("here")
   
     const graphPath = path.join(graphDir, `${title}.png`);
     fs.writeFileSync(graphPath, canvas.toBuffer());
