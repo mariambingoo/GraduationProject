@@ -7,12 +7,10 @@ const packageRouter = express.Router();
 const {uploadPackageFile} = require('../middleware/upload_files')
 
 
-packageRouter.post("/model/create", modelController.createModel);
+packageRouter.post("/model/init", uploadPackageFile, modelController.initModel);
 packageRouter.patch("/model/update/:id", modelController.updateModel);
-packageRouter.post("/model/data/create/:modelID", modelDataController.createModelData);
-packageRouter.post("/model/files/upload", uploadPackageFile ,modelDataController.uploadModelFiles);
-// packageRouter.post("/model/files/create", upload().single('modelFile'),modelDataController.uploadModelFiles);
-// packageRouter.get("/model/files/download/:fileId", modelDataController.downloadModelFiles);
+packageRouter.post("/model/files/upload", uploadPackageFile ,modelController.uploadModelFiles);
+
 packageRouter.post("/run/create", runController.createRun);
 packageRouter.post("/run/data/create", runDataController.createRunData);
 

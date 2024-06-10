@@ -1,21 +1,26 @@
 const mongoose = require('mongoose')
-require('dotenv').config({ path: '../config/dev.env'})
+
+const ModelArchSchema = new mongoose.Schema({
+  reference_string: { type: String, default: '' },
+  meta_data: {
+    fieldname: { type: String, default: '' },
+    originalname: { type: String, default: '' },
+    encoding: { type: String, default: '' },
+    mimetype: { type: String, default: '' },
+    filename: { type: String, default: '' },
+    size: { type: Number, default: 0 }
+  }
+});
 
 const ModelDataSchema = new mongoose.Schema({
-    model_arch:{
-        type: String,
-        required: false
-    },
-    params:{
-        type: Object,
-        required: false,
-    },
-    modelID:{
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'Models'
-    }
-})
+  modelID: mongoose.Schema.Types.ObjectId,
+  model_arch: { type: ModelArchSchema, default: () => ({}) },
+  files: { type: [ModelArchSchema], default: [] },
+  params: {
+    automatic_data: { type: Object, default: {} },
+    manual_data: { type: Object, default: {} }
+  }
+});
 
 const ModelData = mongoose.model('ModelData', ModelDataSchema, 'ModelsData'); 
 

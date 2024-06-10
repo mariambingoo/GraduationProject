@@ -10,9 +10,6 @@ const ensureDirectoryExistence = (filePath) => {
   const dirname = path.resolve(filePath);
   if (!fs.existsSync(dirname)) {
     fs.mkdirSync(dirname, { recursive: true });
-    // console.log(`Directory created: ${dirname}`);
-  } else {
-    // console.log(`Directory already exists: ${dirname}`);
   }
 };
 
@@ -28,7 +25,6 @@ const getUploadPath = (req, file, cb) => {
     destination_path = path.join(baseDir, 'default');
   }
   ensureDirectoryExistence(destination_path);
-  console.log(`Upload path set to: ${destination_path}`);
   cb(null, destination_path);
 };
 
@@ -56,6 +52,6 @@ const upload = multer({
 });
 
 module.exports = {
-  uploadUserFile: upload.single('userAvatar'),
-  uploadPackageFile: upload.single('modelFile'),
+  uploadUserFile: upload.array('userAvatar', 10), // Adjust the field name and max count as needed
+  uploadPackageFile: upload.array('modelFiles', 10), // Adjust the field name and max count as needed
 };
