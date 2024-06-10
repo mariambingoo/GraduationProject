@@ -4,7 +4,7 @@ require('./models/database')
 const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const trainingDataRouter = require('./routes/trainingData');
+// const trainingDataRouter = require('./routes/trainingData');
 const PackageRouter = require('./routes/PackageRouter');
 const UIRouter = require('./routes/UIRouter');
 const UserRouter = require('./routes/UserRouter');

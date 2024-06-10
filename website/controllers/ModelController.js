@@ -1,5 +1,6 @@
 const Model = require('../models/ModelModel');
-const ModelData = require('../models/ModelDataModel')
+const ModelData = require('../models/ModelDataModel');
+
 
 const init_model = async (req, res) => {
   let model, modelData;
