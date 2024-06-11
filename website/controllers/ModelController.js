@@ -10,8 +10,7 @@ const path = require('path');
 
 const init_model = async (req, res) => {
   let model, modelData;
-
-  let data = req.body;
+  let data = JSON.parse(req.body.json);
 
   try {
     if (!data.model_config){
@@ -71,8 +70,10 @@ const init_model = async (req, res) => {
       for (let key in data.params.automatic_data) {
         console.log("Fine till here")
         console.log(data.params.automatic_data)
-        if (data.params.automatic_data.hasOwnProperty(key)) {
-          await plotModelData(data.params.automatic_data[key], 'line', key);
+        for (let key in data.params.automatic_data) {
+          if (data.params.automatic_data.hasOwnProperty(key)) {
+            await plotModelData(data.params.automatic_data[key], 'line', key);
+          }
         }
       }
     }

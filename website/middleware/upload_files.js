@@ -52,8 +52,8 @@ const upload = multer({
 });
 
 module.exports = {
-  uploadUserFile: upload.single('userAvatar'), // Expecting a single file under the 'file' field
-  uploadPackageFile: upload.single("pack_files") // Expecting a single file under the 'packageFile' field
+  uploadUserFile: upload.any(), // Expecting a single file under the 'file' field
+  uploadPackageFile: upload.any() // Expecting a single file under the 'packageFile' field
 }
 
 // const multer = require('multer');

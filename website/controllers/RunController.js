@@ -9,7 +9,6 @@ const path = require('path');
 const init_run = async (req, res) => {
   let model, run, runData;
   let data = JSON.parse(req.body.json);
-  console.log(data);
 
   try {
     if (!data.run_config){
@@ -70,7 +69,7 @@ const init_run = async (req, res) => {
     console.log("All saved :)")
     return res.status(200).send("Operation Successful");
   } catch (error) {
-    return res.status(500).send({ error: "Couldn't initialize run. Please revise the provided data." });
+    return res.status(500).send("Couldn't initialize run. Please revise the provided data.");
   }
 }
 
